@@ -2,18 +2,6 @@
 import { _decorator, Component, Node } from 'cc';
 const { ccclass, property } = _decorator;
 
-/**
- * Predefined variables
- * Name = Nodes
- * DateTime = Tue Mar 29 2022 17:45:03 GMT+0800 (中国标准时间)
- * Author = cyk54088
- * FileBasename = Nodes.ts
- * FileBasenameNoExtension = Nodes
- * URL = db://assets/scripts/Nodes.ts
- * ManualUrl = https://docs.cocos.com/creator/3.4/manual/zh/
- *
- */
- 
 @ccclass('Nodes')
 export class Nodes extends Component {
 

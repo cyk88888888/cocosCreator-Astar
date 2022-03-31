@@ -1,5 +1,6 @@
 
 import { _decorator, Component, Node, Graphics, UITransform, EventTouch, Vec2 } from 'cc';
+import { AStar } from './AStar';
 import { Grid } from './Grid';
 import { Nodes } from './Nodes';
 const { ccclass, property } = _decorator;
@@ -14,13 +15,18 @@ export class TestAStar extends Component {
     public graphicsPath: Graphics;
     @property({ type: Graphics })
     public graphicsPlayer: Graphics;
-    
+
     private _cellSize: number;
     private _grid: Grid;
+    private _index: number;
+    private _path: Nodes[];
+    private _startFrame: boolean;
+    private _speed: number;//人物移动速度、
     start() {
         let self = this;
         self._cellSize = 40;
-        self.node.on(Node.EventType.TOUCH_END,this._tap_grp_container,this);
+        self._speed = 1;
+        self.node.on(Node.EventType.TOUCH_END, this._tap_grp_container, this);
         self.makeGrid();
         self.makePlayer();
     }
@@ -75,8 +81,8 @@ export class TestAStar extends Component {
         lineGraphics.stroke();
     }
 
-     /** 生成一个player角色 */
-     private makePlayer() {
+    /** 生成一个player角色 */
+    private makePlayer() {
         let self = this;
         let screenWh = self.screenWh;
         let width = screenWh[0];
@@ -85,17 +91,77 @@ export class TestAStar extends Component {
         self.graphicsPlayer.fillColor.fromHEX('#ff0000');
         self.graphicsPlayer.circle(0, 0, radius);
         self.graphicsPlayer.fill();
-        
+
         let ranDomStaryPos = self._grid.getRanDomStartPos();
-        let _x = ranDomStaryPos.x * self._cellSize + self._cellSize / 2 - width/2;
-        let _y = ranDomStaryPos.y * self._cellSize + self._cellSize / 2 - height/2;
+        let _x = ranDomStaryPos.x * self._cellSize + self._cellSize / 2 - width / 2;
+        let _y = ranDomStaryPos.y * self._cellSize + self._cellSize / 2 - height / 2;
         self.graphicsPlayer.node.setPosition(_x, _y);
     }
 
     private _tap_grp_container(event: EventTouch) {
         let point = new Vec2(event.getLocationX(), event.getLocationY());
         console.log(point);
+        let self = this;
+        self.graphicsPath.clear();
+        let xPos = Math.floor(point.x / self._cellSize);
+        let yPos = Math.floor(point.y / self._cellSize);
+        let node = self._grid.getNode(xPos, yPos);
+        if (!node) return;
+        self._grid.setEndNode(xPos, yPos);
+        let endNode: Nodes = self._grid.endNode;
+        if (endNode.walkable) {
+            self.graphicsPath.fillColor.fromHEX(self.getColor(endNode));
+            self.graphicsPath.rect(xPos * self._cellSize, yPos * self._cellSize, self._cellSize, self._cellSize);
+            self.graphicsPath.fill();
+        }
+        let playerPos = self.graphicsPlayer.node.position;
+        xPos = Math.floor(playerPos.x / self._cellSize);
+        yPos = Math.floor(playerPos.y / self._cellSize);
+        self._grid.setStartNode(xPos, yPos);
+        self.findPath();
     }
+
+    /** 寻路 */
+    private findPath() {
+        let self = this;
+        let astar = new AStar();
+        if (astar.findPath(self._grid)) {
+            // self.lbl_cost.text = "本次寻路总耗时: " + astar.costTotTime + "秒";
+            self._path = astar.path;
+            self._index = 0;
+            self._startFrame = true;
+        }
+    }
+
+    update() {
+        let self = this;
+        if (!this._startFrame) return;
+        let _cellSize = self._cellSize;
+        let targetX = self._path[self._index].x * _cellSize + _cellSize / 2;
+        let targetY = self._path[self._index].y * _cellSize + _cellSize / 2;
+
+        //把经过的点，涂上黄色
+        let passedNode = self._path[self._index];
+
+        self.graphicsPath.fillColor.fromHEX('#ffff00');
+        self.graphicsPath.rect(passedNode.x * _cellSize, passedNode.y * _cellSize, _cellSize, _cellSize);
+        self.graphicsPath.fill();
+
+        let playerPos = self.graphicsPlayer.node.position;
+        let dx = targetX - playerPos.x;
+        let dy = targetY - playerPos.y;
+        let dist: Number = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 1) {
+            self._index++;//索引加1，即取一个路径节点
+            if (self._index >= self._path.length)//达到最后一个节点时，移除ENTER_FRAME监听
+            {
+                this._startFrame = false;
+            }
+        } else {
+            self.graphicsPlayer.node.setPosition(playerPos.x + dx * self._speed, playerPos.y + dy * self._speed);
+        }
+    }
+
 
     private get screenWh() {
         let self = this;
