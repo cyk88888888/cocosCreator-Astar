@@ -1,8 +1,8 @@
 
-import { _decorator, Component, Node, Graphics, UITransform, EventTouch, Vec2 } from 'cc';
-import { AStar } from './AStar';
-import { Grid } from './Grid';
-import { Nodes } from './Nodes';
+import { _decorator, Component, Node, Graphics, UITransform, EventTouch, Vec2, Label } from 'cc';
+import { AStar } from './astar/AStar';
+import { Grid } from './astar/Grid';
+import { Nodes } from './astar/Nodes';
 const { ccclass, property } = _decorator;
 
 @ccclass('TestAStar')
@@ -15,6 +15,8 @@ export class TestAStar extends Component {
     public graphicsPath: Graphics;
     @property({ type: Graphics })
     public graphicsPlayer: Graphics;
+    @property({ type: Label })
+    public lbl_cost: Label;
 
     private _cellSize: number;
     private _grid: Grid;
@@ -27,8 +29,7 @@ export class TestAStar extends Component {
         self._cellSize = 40;
         self._speed = 1;
         self.node.on(Node.EventType.TOUCH_END, this._tap_grp_container, this);
-        self.makeGrid();
-        self.makePlayer();
+        self.onReset();
     }
 
     makeGrid() {
@@ -36,21 +37,14 @@ export class TestAStar extends Component {
         let screenWh = self.screenWh;
         let width = screenWh[0];
         let height = screenWh[1];
-        let numCols = width / self._cellSize;
-        let numRows = height / self._cellSize;
-
-        //绘制白色背景底
-        const bg = this.getComponent(Graphics)!;
-        bg.clear();
-        bg.fillColor.fromHEX('#FFFFFF');
-        bg.rect(-width / 2, -height / 2, width, height);
-        bg.fill();
-
+        let numCols = Math.ceil(width / self._cellSize);
+        let numRows = Math.ceil(height / self._cellSize);
 
         self._grid = new Grid();
         self._grid.init(numCols, numRows);
 
         let blockGraphics = self.graphicsBlock;
+        blockGraphics.clear();
         let bolckCount = Math.floor((self._grid.numCols * self._grid.numRows) / 4);
         for (let i = 0; i < bolckCount; i++) {
             let _x = Math.floor(Math.random() * self._grid.numCols);
@@ -62,8 +56,8 @@ export class TestAStar extends Component {
             blockGraphics.fill();
         }
 
-
         let lineGraphics = self.graphicsGrid;
+        lineGraphics.clear();
         lineGraphics.lineWidth = 2;
         for (let i = 0; i < numCols + 1; i++)//画竖线
         {
@@ -84,24 +78,29 @@ export class TestAStar extends Component {
     /** 生成一个player角色 */
     private makePlayer() {
         let self = this;
-        let screenWh = self.screenWh;
-        let width = screenWh[0];
-        let height = screenWh[1];
         let radius = 15;//半径
+        self.graphicsPlayer.clear();
         self.graphicsPlayer.fillColor.fromHEX('#ff0000');
         self.graphicsPlayer.circle(0, 0, radius);
         self.graphicsPlayer.fill();
 
         let ranDomStaryPos = self._grid.getRanDomStartPos();
-        let _x = ranDomStaryPos.x * self._cellSize + self._cellSize / 2 - width / 2;
-        let _y = ranDomStaryPos.y * self._cellSize + self._cellSize / 2 - height / 2;
+        let _x = ranDomStaryPos.x * self._cellSize + self._cellSize / 2;
+        let _y = ranDomStaryPos.y * self._cellSize + self._cellSize / 2;
         self.graphicsPlayer.node.setPosition(_x, _y);
     }
 
     private _tap_grp_container(event: EventTouch) {
-        let point = new Vec2(event.getLocationX(), event.getLocationY());
-        console.log(point);
         let self = this;
+        let point = event.getUILocation();//new Vec2(event.getLocationX(), event.getLocationY());
+        console.log('getUILocation: ' + event.getUILocation());
+        console.log('getLocationInView: ' + event.getLocationInView());
+        console.log('getLocation: ' + event.getLocation());
+        console.log('getPreviousLocation: ' + event.getPreviousLocation());
+        console.log('getStartLocation: ' + event.getStartLocation());
+        console.log('getUIStartLocation: ' + event.getUIStartLocation());
+
+
         self.graphicsPath.clear();
         let xPos = Math.floor(point.x / self._cellSize);
         let yPos = Math.floor(point.y / self._cellSize);
@@ -126,7 +125,7 @@ export class TestAStar extends Component {
         let self = this;
         let astar = new AStar();
         if (astar.findPath(self._grid)) {
-            // self.lbl_cost.text = "本次寻路总耗时: " + astar.costTotTime + "秒";
+            self.lbl_cost.string = "本次寻路总耗时: " + astar.costTotTime + "秒";
             self._path = astar.path;
             self._index = 0;
             self._startFrame = true;
@@ -162,6 +161,15 @@ export class TestAStar extends Component {
         }
     }
 
+    /**
+     * 重置
+     */
+    private onReset() {
+        let self = this;
+        self.graphicsPath.clear();
+        self.makeGrid();
+        self.makePlayer();
+    }
 
     private get screenWh() {
         let self = this;
