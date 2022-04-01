@@ -10,7 +10,7 @@
   },
   {
     "__type__": "cc.Scene",
-    "_name": "main",
+    "_name": "testAStar2",
     "_objFlags": 0,
     "_parent": null,
     "_children": [
@@ -31,7 +31,7 @@
     "_globals": {
       "__id__": 55
     },
-    "_id": "a1ac3642-7d39-4c4f-983b-6408a0843791"
+    "_id": "29ba62b0-bbfc-4c09-a9d4-346d73d302ad"
   },
   {
     "__type__": "cc.Node",
@@ -305,7 +305,7 @@
     "_priority": 1073741824,
     "_fov": 45,
     "_fovAxis": 0,
-    "_orthoHeight": 320,
+    "_orthoHeight": 366.0674157303371,
     "_near": 1,
     "_far": 2000,
     "_color": {
@@ -945,7 +945,7 @@
       "__id__": 10
     },
     "component": "",
-    "_componentId": "50095G6OHJN6p+9cmdCWyaN",
+    "_componentId": "cc23dXs8+ROH5+lEZdILpT+",
     "handler": "onReset",
     "customEventData": ""
   },
@@ -1091,7 +1091,7 @@
       "b": 0,
       "a": 255
     },
-    "_string": "模拟山路",
+    "_string": "模拟平路",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 20,
@@ -1243,8 +1243,8 @@
       "__id__": 10
     },
     "component": "",
-    "_componentId": "50095G6OHJN6p+9cmdCWyaN",
-    "handler": "onReset",
+    "_componentId": "cc23dXs8+ROH5+lEZdILpT+",
+    "handler": "onTranslate",
     "customEventData": ""
   },
   {
@@ -1822,7 +1822,7 @@
     "_id": "db6wplv7BJZZ6jU241yf15"
   },
   {
-    "__type__": "50095G6OHJN6p+9cmdCWyaN",
+    "__type__": "cc23dXs8+ROH5+lEZdILpT+",
     "_name": "",
     "_objFlags": 0,
     "node": {
@@ -1845,7 +1845,7 @@
     "lbl_cost": {
       "__id__": 17
     },
-    "_id": "53dts7HNhC8YgAlDkCRHw8"
+    "_id": "c5erNDF59DQIzQOoQjYNjy"
   },
   {
     "__type__": "cc.UITransform",

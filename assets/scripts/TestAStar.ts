@@ -5,6 +5,10 @@ import { Grid } from './astar/Grid';
 import { Nodes } from './astar/Nodes';
 const { ccclass, property } = _decorator;
 
+/**
+ * 测试AStar（平路情况下（代价因子一样大））
+ * @author CYK
+ */
 @ccclass('TestAStar')
 export class TestAStar extends Component {
     @property({ type: Graphics })
@@ -92,7 +96,7 @@ export class TestAStar extends Component {
 
     private _tap_grp_container(event: EventTouch) {
         let self = this;
-        let point = event.getUILocation();//new Vec2(event.getLocationX(), event.getLocationY());
+        let point = event.getUILocation();
         console.log('getUILocation: ' + event.getUILocation());
         console.log('getLocationInView: ' + event.getLocationInView());
         console.log('getLocation: ' + event.getLocation());
@@ -132,7 +136,7 @@ export class TestAStar extends Component {
         }
     }
 
-    update() {
+    update(deltaTime: number) {
         let self = this;
         if (!this._startFrame) return;
         let _cellSize = self._cellSize;
@@ -187,6 +191,10 @@ export class TestAStar extends Component {
         if (node == self._grid.endNode)
             return '#ff0000';
         return '#ffffff';
+    }
+    
+    private onTranslate(){
+
     }
 }
 
