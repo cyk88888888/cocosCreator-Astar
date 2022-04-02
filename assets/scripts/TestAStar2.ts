@@ -1,5 +1,5 @@
 
-import { _decorator, Component, Node, Graphics, Label, UITransform, EventTouch } from 'cc';
+import { _decorator, Component, Node, Graphics, Label, UITransform, EventTouch, director } from 'cc';
 import { AStar } from './astar/AStar';
 import { Grid } from './astar/Grid';
 import { Nodes } from './astar/Nodes';
@@ -29,6 +29,14 @@ export class TestAStar2 extends Component {
         let self = this;
         self._cellSize = 40;
         self.node.on(Node.EventType.TOUCH_END, this._tap_grp_container, this);
+
+        self.initGrid();
+
+        self.onReset();
+    }
+
+    private initGrid() {
+        let self = this;
         let screenWh = self.screenWh;
         let width = screenWh[0];
         let height = screenWh[1];
@@ -39,7 +47,24 @@ export class TestAStar2 extends Component {
         self._grid.init(numCols, numRows);
         self._grid.setStartNode(1, 1);
         self._grid.setEndNode(self._grid.numCols - 1, self._grid.numRows - 1);
-        self.onReset();
+
+        let lineGraphics = self.graphicsGrid;
+        lineGraphics.clear();
+        lineGraphics.lineWidth = 2;
+        for (let i = 0; i < numCols + 1; i++)//画竖线
+        {
+
+            lineGraphics.moveTo(i * self._cellSize, 0);
+            lineGraphics.lineTo(i * self._cellSize, numRows * self._cellSize);
+        }
+
+
+        for (let i = 0; i < numRows + 1; i++)//画横线
+        {
+            lineGraphics.moveTo(0, i * self._cellSize);
+            lineGraphics.lineTo(numCols * self._cellSize, i * self._cellSize);
+        }
+        lineGraphics.stroke();
     }
 
     /**
@@ -76,6 +101,7 @@ export class TestAStar2 extends Component {
                 graphicsPath.fill();
             }
         }
+
     }
 
     //找路
@@ -128,9 +154,9 @@ export class TestAStar2 extends Component {
         let transform = self.node.getComponent(UITransform);
         return [transform.contentSize.width, transform.contentSize.height];
     }
-    
-    private onTranslate(){
 
+    private onTranslate() {
+        director.loadScene('testAStar');
     }
 
 }

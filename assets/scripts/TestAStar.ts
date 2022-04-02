@@ -1,8 +1,9 @@
 
-import { _decorator, Component, Node, Graphics, UITransform, EventTouch, Vec2, Label } from 'cc';
+import { _decorator, Component, Node, Graphics, UITransform, EventTouch, Label, director, Prefab, instantiate } from 'cc';
 import { AStar } from './astar/AStar';
 import { Grid } from './astar/Grid';
 import { Nodes } from './astar/Nodes';
+import { MessageItem } from './message/MessageItem';
 const { ccclass, property } = _decorator;
 
 /**
@@ -21,6 +22,8 @@ export class TestAStar extends Component {
     public graphicsPlayer: Graphics;
     @property({ type: Label })
     public lbl_cost: Label;
+    @property({ type: Prefab })
+    public messageitem: Prefab;
 
     private _cellSize: number;
     private _grid: Grid;
@@ -33,10 +36,11 @@ export class TestAStar extends Component {
         self._cellSize = 40;
         self._speed = 1;
         self.node.on(Node.EventType.TOUCH_END, this._tap_grp_container, this);
+        self.initGrid();
         self.onReset();
     }
 
-    makeGrid() {
+    private initGrid() {
         let self = this;
         let screenWh = self.screenWh;
         let width = screenWh[0];
@@ -46,19 +50,6 @@ export class TestAStar extends Component {
 
         self._grid = new Grid();
         self._grid.init(numCols, numRows);
-
-        let blockGraphics = self.graphicsBlock;
-        blockGraphics.clear();
-        let bolckCount = Math.floor((self._grid.numCols * self._grid.numRows) / 4);
-        for (let i = 0; i < bolckCount; i++) {
-            let _x = Math.floor(Math.random() * self._grid.numCols);
-            let _y = Math.floor(Math.random() * self._grid.numRows);
-            self._grid.setWalkable(_x, _y, false);
-            let node = self._grid.getNode(_x, _y);
-            blockGraphics.fillColor.fromHEX(self.getColor(node));
-            blockGraphics.rect(_x * self._cellSize, _y * self._cellSize, self._cellSize, self._cellSize);
-            blockGraphics.fill();
-        }
 
         let lineGraphics = self.graphicsGrid;
         lineGraphics.clear();
@@ -77,6 +68,22 @@ export class TestAStar extends Component {
             lineGraphics.lineTo(numCols * self._cellSize, i * self._cellSize);
         }
         lineGraphics.stroke();
+    }
+
+    private makeBlock() {
+        let self = this;
+        let blockGraphics = self.graphicsBlock;
+        blockGraphics.clear();
+        let bolckCount = Math.floor((self._grid.numCols * self._grid.numRows) / 4);
+        for (let i = 0; i < bolckCount; i++) {
+            let _x = Math.floor(Math.random() * self._grid.numCols);
+            let _y = Math.floor(Math.random() * self._grid.numRows);
+            self._grid.setWalkable(_x, _y, false);
+            let node = self._grid.getNode(_x, _y);
+            blockGraphics.fillColor.fromHEX(self.getColor(node));
+            blockGraphics.rect(_x * self._cellSize, _y * self._cellSize, self._cellSize, self._cellSize);
+            blockGraphics.fill();
+        }
     }
 
     /** 生成一个player角色 */
@@ -133,6 +140,11 @@ export class TestAStar extends Component {
             self._path = astar.path;
             self._index = 0;
             self._startFrame = true;
+        } else {
+            let messageitem = instantiate(self.messageitem);
+            let msgScript = messageitem.getComponent(MessageItem);
+            msgScript.setContent('没找到最佳节点，无路可走!');
+            self.node.parent.addChild(messageitem);
         }
     }
 
@@ -171,7 +183,7 @@ export class TestAStar extends Component {
     private onReset() {
         let self = this;
         self.graphicsPath.clear();
-        self.makeGrid();
+        self.makeBlock();
         self.makePlayer();
     }
 
@@ -192,9 +204,9 @@ export class TestAStar extends Component {
             return '#ff0000';
         return '#ffffff';
     }
-    
-    private onTranslate(){
 
+    private onTranslate() {
+        director.loadScene('testAStar2');
     }
 }
 

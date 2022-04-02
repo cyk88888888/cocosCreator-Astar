@@ -27,7 +27,7 @@
     "_active": true,
     "_components": [],
     "_prefab": null,
-    "autoReleaseAssets": false,
+    "autoReleaseAssets": true,
     "_globals": {
       "__id__": 55
     },
@@ -951,7 +951,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "btn_mountain",
+    "_name": "btn_road",
     "_objFlags": 0,
     "_parent": {
       "__id__": 10
