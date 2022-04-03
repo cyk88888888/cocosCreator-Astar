@@ -183,6 +183,7 @@ export class TestAStar extends Component {
     private onReset() {
         let self = this;
         self.graphicsPath.clear();
+        self._grid.resetWalkable();
         self.makeBlock();
         self.makePlayer();
     }

@@ -23,9 +23,6 @@ export class Grid extends Component {
     private _nodes: any[];//节点数组
     private _numCols: number;//列数
     private _numRows: number;//行数
-    start () {
-        // [3]
-    }
 
     public init(numCols: number, numRows: number){
         let self = this;
@@ -37,6 +34,15 @@ export class Grid extends Component {
             for (let j = 0; j < self._numRows; j++) {
                 self._nodes[i][j] = new Nodes();
                 self._nodes[i][j].init(i,j);
+            }
+        }
+    }
+
+    public resetWalkable(){
+        let self = this;
+        for (let i = 0; i < self._numCols; i++) {
+            for (let j = 0; j < self._numRows; j++) {
+                self._nodes[i][j].walkable = true;
             }
         }
     }
