@@ -73,7 +73,7 @@ export class TestAStar extends Component {
         }
         lineGraphics.stroke();
         let groundParent = this.node.getChildByName('ground');
-        let len = (numCols-1) * (numRows);
+        let len = numCols * numRows;
         for (let i = 0; i < len; i++)
         {
             let ground = instantiate(this.ground);
