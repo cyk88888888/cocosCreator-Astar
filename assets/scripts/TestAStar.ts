@@ -1,5 +1,5 @@
 
-import { _decorator, Component, Node, Graphics, UITransform, EventTouch, Label, director, Prefab, instantiate } from 'cc';
+import { _decorator, Component, Node, Graphics, UITransform, EventTouch, Label, director, Prefab, instantiate, Vec3 } from 'cc';
 import { AStar } from './astar/AStar';
 import { Grid } from './astar/Grid';
 import { Nodes } from './astar/Nodes';
@@ -24,6 +24,10 @@ export class TestAStar extends Component {
     public lbl_cost: Label;
     @property({ type: Prefab })
     public messageitem: Prefab;
+    @property({type:Prefab})
+    public ground: Prefab;
+    @property({type:Prefab})
+    public wall: Prefab;
 
     private _cellSize: number;
     private _grid: Grid;
@@ -33,7 +37,7 @@ export class TestAStar extends Component {
     private _speed: number;//人物移动速度、
     start() {
         let self = this;
-        self._cellSize = 40;
+        self._cellSize = 30;
         self._speed = 1;
         self.node.on(Node.EventType.TOUCH_END, this._tap_grp_container, this);
         self.initGrid();
@@ -68,12 +72,21 @@ export class TestAStar extends Component {
             lineGraphics.lineTo(numCols * self._cellSize, i * self._cellSize);
         }
         lineGraphics.stroke();
+        let groundParent = this.node.getChildByName('ground');
+        let len = (numCols-1) * (numRows);
+        for (let i = 0; i < len; i++)
+        {
+            let ground = instantiate(this.ground);
+            groundParent.addChild(ground);
+        }
     }
 
     private makeBlock() {
         let self = this;
         let blockGraphics = self.graphicsBlock;
         blockGraphics.clear();
+        let wallParent = this.node.getChildByName('wall');
+        wallParent.removeAllChildren();
         let bolckCount = Math.floor((self._grid.numCols * self._grid.numRows) / 4);
         for (let i = 0; i < bolckCount; i++) {
             let _x = Math.floor(Math.random() * self._grid.numCols);
@@ -83,13 +96,16 @@ export class TestAStar extends Component {
             blockGraphics.fillColor.fromHEX(self.getColor(node));
             blockGraphics.rect(_x * self._cellSize, _y * self._cellSize, self._cellSize, self._cellSize);
             blockGraphics.fill();
+            let wall = instantiate(this.wall);
+            wallParent.addChild(wall);
+            wall.setPosition(new Vec3(_x * self._cellSize, _y * self._cellSize))
         }
     }
 
     /** 生成一个player角色 */
     private makePlayer() {
         let self = this;
-        let radius = 15;//半径
+        let radius = 13;//半径
         self.graphicsPlayer.clear();
         self.graphicsPlayer.fillColor.fromHEX('#ff0000');
         self.graphicsPlayer.circle(0, 0, radius);
@@ -186,6 +202,13 @@ export class TestAStar extends Component {
         self._grid.resetWalkable();
         self.makeBlock();
         self.makePlayer();
+    }
+
+    private showGrid(){
+        let self = this;
+        self.graphicsGrid.node.active = !self.graphicsGrid.node.active;
+        self.graphicsBlock.node.active = !self.graphicsBlock.node.active;
+        
     }
 
     private get screenWh() {

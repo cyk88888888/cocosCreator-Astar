@@ -305,7 +305,7 @@
     "_priority": 1073741824,
     "_fov": 45,
     "_fovAxis": 0,
-    "_orthoHeight": 366.0674157303371,
+    "_orthoHeight": 320,
     "_near": 1,
     "_far": 2000,
     "_color": {
@@ -602,7 +602,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 202.8,
+      "width": 175,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -632,7 +632,7 @@
       "b": 0,
       "a": 255
     },
-    "_string": "本次寻路总耗时: 0",
+    "_string": "本次寻路总耗时",
     "_horizontalAlign": 0,
     "_verticalAlign": 1,
     "_actualFontSize": 25,
