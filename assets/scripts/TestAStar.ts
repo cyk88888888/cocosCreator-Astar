@@ -232,6 +232,12 @@ export class TestAStar extends Comp {
 
     private onTranslate() {
         director.loadScene('testAStar2');
+        this.destroy();
+    }
+
+    private onExit(){
+        let self = this;
+        self.node.off(Node.EventType.TOUCH_END, self._tap_grp_container, self);
     }
 }
 
