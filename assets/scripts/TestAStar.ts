@@ -3,6 +3,7 @@ import { _decorator, Component, Node, Graphics, UITransform, EventTouch, Label, 
 import { AStar } from './astar/AStar';
 import { Grid } from './astar/Grid';
 import { Nodes } from './astar/Nodes';
+import { Comp } from './base/Comp';
 import { MessageItem } from './message/MessageItem';
 const { ccclass, property } = _decorator;
 
@@ -11,7 +12,7 @@ const { ccclass, property } = _decorator;
  * @author CYK
  */
 @ccclass('TestAStar')
-export class TestAStar extends Component {
+export class TestAStar extends Comp {
     @property({ type: Graphics })
     public graphicsGrid: Graphics;
     @property({ type: Graphics })
